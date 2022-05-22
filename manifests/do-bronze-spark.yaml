@@ -18,7 +18,7 @@ spec:
   pythonVersion: "3"
   image: "carlosbpy/spark-structured-streaming:latest"
   imagePullPolicy: Always
-  mainApplicationFile: local:///app/bronze.py
+  mainApplicationFile: local:///app/do-bronze.py
   sparkVersion: "3.1.1"
   restartPolicy:
     type: Never
