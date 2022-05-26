@@ -1,0 +1,59 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: live-una-spark-gold
+  namespace: spark
+spec:
+  volumes:
+    - name: ivy
+      emptyDir: {}
+  sparkConf:
+    spark.driver.extraJavaOptions: "-Divy.cache.dir=/tmp -Divy.home=/tmp, -Dcom.amazonaws.services.s3.enableV4=true"
+    spark.executor.extraJavaOptions: "-Dcom.amazonaws.services.s3.enableV4=true"
+    spark.kubernetes.allocation.batch.size: "10"
+  hadoopConf:
+    fs.s3a.impl: org.apache.hadoop.fs.s3a.S3AFileSystem
+    fs.s3a.path.style.access: "True"
+  type: Python
+  pythonVersion: "3"
+  image: "carlosbpy/live-una-spark:latest"
+  imagePullPolicy: Always
+  mainApplicationFile: local:///app/gold.py
+  sparkVersion: "3.1.1"
+  restartPolicy:
+    type: Never
+  driver:
+    envSecretKeyRefs:
+      AWS_ACCESS_KEY_ID:
+        name: aws-secret
+        key: awsAccessKeyId
+      AWS_SECRET_ACCESS_KEY:
+        name: aws-secret
+        key: awsSecretAccessKey
+    cores: 1
+    coreRequest: "500m"
+    coreLimit: "1200m"
+    memory: "4g"
+    labels:
+      version: 3.1.1
+    serviceAccount: spark-spark
+    volumeMounts:
+      - name: ivy
+        mountPath: /tmp
+  executor:
+    envSecretKeyRefs:
+      AWS_ACCESS_KEY_ID:
+        name: aws-secret
+        key: awsAccessKeyId
+      AWS_SECRET_ACCESS_KEY:
+        name: aws-secret
+        key: awsSecretAccessKey
+    cores: 1
+    coreRequest: "500m"
+    instances: 1
+    memory: "4g"
+    labels:
+      version: 3.1.1
+    volumeMounts:
+      - name: ivy
+        mountPath: /tmp
