@@ -1,7 +1,7 @@
 apiVersion: "sparkoperator.k8s.io/v1beta2"
 kind: SparkApplication
 metadata:
-  name: spark-bronze
+  name: live-una-spark
   namespace: spark
 spec:
   volumes:
@@ -16,9 +16,9 @@ spec:
     fs.s3a.path.style.access: "True"
   type: Python
   pythonVersion: "3"
-  image: "carlosbpy/spark-structured-streaming:latest"
+  image: "carlosbpy/live-una-spark:latest"
   imagePullPolicy: Always
-  mainApplicationFile: local:///app/do-bronze.py
+  mainApplicationFile: local:///app/main.py
   sparkVersion: "3.1.1"
   restartPolicy:
     type: Never
